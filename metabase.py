@@ -746,8 +746,8 @@ class MetabaseApi:
         # Remove dashboard_id if present (cards shouldn't have this field when importing)
         if 'dashboard_id' in card_from_json:
             del card_from_json['dashboard_id']
-        # Remove collection_id if present (dashboard questions can't have collection_id set)
-        if 'collection_id' in card_from_json:
+        # Remove collection_id only if it's None (keep it if explicitly set via collection_name parameter)
+        if 'collection_id' in card_from_json and card_from_json['collection_id'] is None:
             del card_from_json['collection_id']
         # Clean up parameters with invalid card_id in values_source_config
         if 'parameters' in card_from_json and card_from_json['parameters']:
@@ -771,8 +771,8 @@ class MetabaseApi:
         # Remove dashboard_id if present (metrics/cards shouldn't have this field)
         if 'dashboard_id' in metric_from_json:
             del metric_from_json['dashboard_id']
-        # Remove collection_id if present (dashboard questions can't have collection_id set)
-        if 'collection_id' in metric_from_json:
+        # Remove collection_id only if it's None (keep it if explicitly set via collection_name parameter)
+        if 'collection_id' in metric_from_json and metric_from_json['collection_id'] is None:
             del metric_from_json['collection_id']
         # Clean up parameters with invalid card_id in values_source_config
         if 'parameters' in metric_from_json and metric_from_json['parameters']:
@@ -915,7 +915,7 @@ class MetabaseApi:
             errors = None
             for metric in jsondata:
                 try:
-                    res.append(self.metric_import(database_name, self.convert_names2ids(database_name, None, metric)))
+                    res.append(self.metric_import(database_name, self.convert_names2ids(database_name, collection_name, metric)))
                 except ValueError as e:
                     if not errors:
                         errors = ValueError(metric['name']+": "+ str(e))

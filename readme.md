@@ -95,6 +95,12 @@ Import into target:
 python3 metabase_import.py http://192.168.2.106:3000/api/ user@example.com Secret123 mydb export
 ```
 
+Importing into a Specific Collection
+
+```bash
+python3 metabase_import.py http://192.168.2.106:3000/api/ user@example.com Secret123 mydb export "Reports v0.1"
+```
+
 ---
 
 ## ⚠️ Known Issues
