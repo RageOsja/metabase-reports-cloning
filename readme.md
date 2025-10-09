@@ -1,63 +1,93 @@
-# Metabase Export/Import
+# 🧰 Metabase Export & Import Utility
 
-This python library allows to export and import a community version instance of Metabase
+A Python-based utility for exporting and importing configuration data from a community edition instance of [Metabase](https://www.metabase.com).  
+This tool allows you to back up and restore key Metabase assets, including **fields**, **cards**, and **dashboards** — ideal for environment migrations or instance replication.
 
-## Example scripts
+---
 
-Two scripts are provided to import and export fields, cards and dashboards of a specific database configuration of metabase :
+## 🚀 Features
 
-    python3 metabase_export.py http://localhost:3000/api/ my_user my_password my_database export_folder
+- 📤 Export fields, cards, and dashboards from an existing Metabase instance.  
+- 📥 Import configurations into a new or existing Metabase deployment.  
+- 🗂️ Supports multiple databases and environments.  
+- 🧱 Simple CLI commands for quick backup and restore.  
 
-The script produces 3 files for each exported elements (the name of the database is user as prefix) : `my_database_fields_exported.csv`, `my_database_cards_exported.json` and `my_database_dashboard_exported.json`
+---
 
-    python3 metabase_import.py http://localhost:3000/api/ my_user my_password my_database import_folder
+## 📦 Requirements
 
-The script imports from 3 files, one for each elements : `my_database_fields_forimport.csv`, `my_database_cards_forimport.json` and `my_database_dashboard_forimport.json`
+- Python 3.8+
+- `requests` library  
+  Install dependencies with:
+  ```bash
+  pip install -r requirements.txt
+(or manually install requests if no requirements file is present)
 
-## Library calls
+🛠️ Usage
+1. Export Metabase Data
+bash
+Copy code
+python3 metabase_export.py http://localhost:3000/api/ <username> <password> <database_name> <export_folder>
+This command will generate three files for each element, using the database name as a prefix:
 
-### database creation/deletion
+<database_name>_fields_exported.csv
 
-    import metabase
-    
-    #connect to metabase
-    ametabase = metabase.MetabaseApi("http://localhost:3000/api/", "metabase_username", "metabase_password")
-    
-    #add a sqlite database located at /path/to/database.sqlite. The metabase associated name is my_database
-    ametabase.create_database("my_database", 'sqlite', {"db":"/path/to/database.sqlite"})
+<database_name>_cards_exported.json
 
-    #ametabase.delete_database('my_database')
+<database_name>_dashboard_exported.json
 
-### users and permisssions
+✅ Tip: Make sure the user has admin or read access to the required resources.
 
-    ametabase.create_user("user@example.org", "the_password", {'first_name': 'John', 'last_name': 'Doe'})
-    
-    #Add a group and associate it with our new user
-    ametabase.membership_add('user@example.org', 'a_group')
-    
-    #allow read data and create interraction with my_database for users members of our new group (a_group)
-    ametabase.permission_set_database('a_group', 'my_database', True, True)
+2. Import Metabase Data
+bash
+Copy code
+python3 metabase_import.py http://localhost:3000/api/ <username> <password> <database_name> <import_folder>
+This will import fields, cards, and dashboards into the target Metabase instance from the exported files.
 
-### collections and permissions
+📝 File Naming Convention
+Element	Exported File Name	Import File Name
+Fields	<database_name>_fields_exported.csv	<database_name>_fields_forimport.csv
+Cards	<database_name>_cards_exported.json	<database_name>_cards_forimport.json
+Dashboards	<database_name>_dashboard_exported.json	<database_name>_dashboard_forimport.json
 
-    #create a collection and its sub collection
-    ametabase.create_collection('sub_collection', 'main_collection')
+Before importing, ensure the file names match the expected import format.
 
-    #allow write right on the new collections to the membres of a_group
-    ametabase.permission_set_collection('main_collection', 'a_group', 'write')
-    ametabase.permission_set_collection('sub_collection', 'a_group', 'write')
+🧭 Notes & Tips
+Ensure the target Metabase instance has the same database schema as the source.
 
-### schema
+If dashboards belong to collections, make sure collections exist in the target instance before importing.
 
-    #export and import the schema of fields
-    ametabase.export_fields_to_csv('my_database', 'my_database_fields.csv')
-    ametabase.import_fields_from_csv('my_database', 'my_database_fields.csv')
+Metrics are deprecated in newer Metabase versions — you can safely skip metrics import if not applicable.
 
-### cards and dashboards
+If collection_id is null, remove the field or set it to a valid collection to avoid 400 errors during import.
 
-    ametabase.export_cards_to_json('my_database', 'my_database_cards.json')
-    ametabase.export_dashboards_to_json('my_database', 'my_database_dashboard.json')
+🧪 Example
+Export from source:
 
-    ametabase.import_cards_from_json('my_database', 'my_database_cards.json')
-    ametabase.import_dashboards_from_json('my_database', 'my_database_dashboard.json')
+bash
+Copy code
+python3 metabase_export.py https://source-metabase.com/api/ admin@example.com Secret123 mydb export
+Import into target:
 
+bash
+Copy code
+python3 metabase_import.py http://192.168.1.10:3000/api/ user@example.com Secret123 mydb export
+
+⚠️Known Issues
+
+🧭 Tabs Handling:
+Creating dashboard tabs and placing their respective cards in the correct tab is not yet supported.
+All cards are placed under the main dashboard section during import. If your dashboards use tabs extensively, you may need to manually recreate tabs after import.
+
+🤝 Contributing
+Pull requests are welcome!
+If you find bugs or want to suggest improvements, please open an issue.
+
+
+💡 Acknowledgements
+Metabase — Open-source analytics platform.
+
+Community contributors who helped improve the API export/import workflow.
+
+
+Would you like me to also include **a section with version compatibility** (e.g., API changes between old and new Metabase) in this README? (useful if others will use your repo).
