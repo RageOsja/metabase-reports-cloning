@@ -119,9 +119,3 @@ If you find bugs or want to suggest improvements, please [open an issue](../../i
 
 ```
 
----
-
-✅ This version clearly documents the **tab limitation**, which will help users understand what to expect during dashboard migration.  
-
-Would you like me to also add a **“Roadmap / To Do”** section to show that **tab support is planned** (useful if you plan to maintain the repo)?
-```
